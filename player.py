@@ -2,10 +2,12 @@ import pygame
 import settings as stn
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y,HP=100,dmg=50):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
+        self.dmg=dmg
+        self.HP=HP
         # self.width = width
         # self.height = height
         self.image=pygame.Surface((60,60))
