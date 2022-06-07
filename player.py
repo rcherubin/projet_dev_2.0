@@ -2,14 +2,13 @@ import pygame
 import settings as stn
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y,HP=100,dmg=50):
+    def __init__(self, x, y,HP=100,dmg=50,score=0):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.dmg=dmg
         self.HP=HP
-        # self.width = width
-        # self.height = height
+        self.score=score
         self.image=pygame.Surface((60,60))
         self.image.fill(stn.RED)
         # self.image=pygame.image.load(os.path.join(stn.img_folder,img)).convert()
@@ -65,3 +64,12 @@ class Player(pygame.sprite.Sprite):
                 self.rect.bottom=0
     def changeMoveSet(self, buttons):
         self.moveset = [buttons[0],buttons[1],buttons[2],buttons[3]]
+    def decreaseHP(self,dmg):
+        self.HP-=dmg
+        if self.HP<=0:
+            self.HP=0
+    def increaseScore(self,score):
+        self.score+=score
+    def takeDamage(self,player):
+        self.decreaseHP(player.dmg)
+        player.increaseScore(50)

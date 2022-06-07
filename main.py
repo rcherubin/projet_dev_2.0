@@ -59,6 +59,8 @@ while True:
         # predator.updateScore(50)
         # print(predator.name+" : ",predator.score)
         print("player2 touché par un bullet")
+        player2.takeDamage(player1)
+        print(player2.HP)
         # victim.decreaseHP(predator.Dmg)
         # print(victim.HP)
     
