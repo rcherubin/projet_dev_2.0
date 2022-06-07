@@ -2,12 +2,12 @@ import pygame
 import settings as stn
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        # self.width = width
+        # self.height = height
         self.image=pygame.Surface((60,60))
         self.image.fill(stn.RED)
         # self.image=pygame.image.load(os.path.join(stn.img_folder,img)).convert()
