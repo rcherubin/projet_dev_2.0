@@ -1,13 +1,14 @@
 import pygame
 import settings as stn
-
+from random import randint
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y,HP=100,dmg=50,score=0):
+    def __init__(self, x, y,HP=1000,dmg=50,score=0):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.dmg=dmg
-        self.HP=HP
+        self.maxHP=HP
+        self.HP=self.maxHP
         self.score=score
         self.image=pygame.Surface((60,60))
         self.image.fill(stn.RED)
@@ -67,7 +68,19 @@ class Player(pygame.sprite.Sprite):
     def decreaseHP(self,dmg):
         self.HP-=dmg
         if self.HP<=0:
-            self.HP=0
+            self.respawn()
+    def respawn(self):
+        self.decreaseScore(100)
+        x=randint(50,stn.WIDTH-50)
+        y=randint(50,stn.HEIGHT-50)
+        self.rect.center=(x,y)
+        self.HP=self.maxHP
+        # self.lives-=1
+        # self.isDead=False
+    def decreaseScore(self,score):
+        self.score-=score
+        if self.score<0:
+            self.score=0
     def increaseScore(self,score):
         self.score+=score
     def takeDamage(self,player):
