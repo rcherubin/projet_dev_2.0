@@ -2,7 +2,7 @@ import pygame
 import settings as stn
 from random import randint
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y,HP=1000,dmg=50,score=0):
+    def __init__(self, x, y,HP=1000,dmg=200,score=0,lives=5):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -10,6 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.maxHP=HP
         self.HP=self.maxHP
         self.score=score
+        self.lives=lives
         self.image=pygame.Surface((60,60))
         self.image.fill(stn.RED)
         # self.image=pygame.image.load(os.path.join(stn.img_folder,img)).convert()
@@ -17,16 +18,11 @@ class Player(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.center=(self.x,self.y)
         
-    # def main(self, display):
-    #     pygame.draw.rect(display, (255, 0, 0), (self.x, self.y, self.width, self.height))
         
     def update(self):
         #joueur va à gauche
         if self.moveset[0]:
             self.rect.x -= 5
-            # self.prevX=1
-            # self.directionX=1
-            # self.directionY=0
             if self.rect.right<0:
                 self.rect.left=stn.WIDTH
 
@@ -34,33 +30,18 @@ class Player(pygame.sprite.Sprite):
         #joueur va à droite
         if self.moveset[1]:
             self.rect.x += 5
-            # self.prevX=1
-            # self.directionX=-1
-            # self.directionY=0
             if self.rect.left>stn.WIDTH:
                 self.rect.right=0
 
         #joueur va en haut
         if self.moveset[2]:
-            prevY=1
             self.rect.y -= 5
-            # if self.prevX<=0:
-            #     self.directionX=0
-            # else:
-            #     prevY=0
-            # self.directionY=prevY
             if self.rect.bottom<0:
                 self.rect.top=stn.HEIGHT
 
         #joueur va en bas
         if self.moveset[3]:
-            prevY=-1
             self.rect.y += 5
-            # if self.prevX<=0:
-            #     self.directionX=0
-            # else:
-            #     prevY=0
-            # self.directionY=prevY
             if self.rect.top>stn.HEIGHT:
                 self.rect.bottom=0
     def changeMoveSet(self, buttons):
@@ -74,9 +55,8 @@ class Player(pygame.sprite.Sprite):
         x=randint(50,stn.WIDTH-50)
         y=randint(50,stn.HEIGHT-50)
         self.rect.center=(x,y)
+        self.lives-=1
         self.HP=self.maxHP
-        # self.lives-=1
-        # self.isDead=False
     def decreaseScore(self,score):
         self.score-=score
         if self.score<0:
