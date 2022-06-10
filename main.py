@@ -1,9 +1,11 @@
 import pygame
 import sys
 import pygame_menu
+import menu as mn
 from player import Player
 from ball import Ball
 import settings as stn
+import database as db
 from pygame_menu.examples import create_example_window
 pygame.init()
 display = pygame.display.set_mode((stn.WIDTH, stn.HEIGHT))
@@ -12,8 +14,8 @@ def start_the_game():
 
 
 
-    player1 = Player(400, 300)
-    player2 = Player(100, 100)
+    player1 = Player(400, 300,"Cherubin")
+    player2 = Player(100, 100,"Ted")
     players_sprites = pygame.sprite.Group() # tous les sprites
     bullets_P1=pygame.sprite.Group() # la sprite des bulletes du joueur 1 
     bullets_P2=pygame.sprite.Group() # la sprite des bulletes du joueur 2
@@ -53,7 +55,13 @@ def start_the_game():
             print("player2 touché par un bullet")
             player2.takeDamage(player1)
         if player2.lives<=0 or player1.lives<=0:
-            scoreEndGame("Game Over")
+            if player1.score>player2.score:
+                gameOverText=player1.name+" est le gagnant avec "+str(player1.score)+" de score!!!"
+                db.insertWinner(player1)
+            else:
+                gameOverText=player2.name+" est le gagnant avec "+str(player2.score)+" de score!!!"
+                db.insertWinner(player2)
+            scoreEndGame(gameOverText)
             break
         
         
@@ -64,12 +72,13 @@ def start_the_game():
         bullets_P2.draw(display)
         pygame.display.update()
 def menuPrincipal():
+    displayScoreBoard=mn.displayScoreBoard()
     menu = pygame_menu.Menu('Welcome', stn.WIDTH, stn.HEIGHT,
                         theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Play',start_the_game)
     # menu.add.button('Change Player 1', change_Player1_menu)
     # menu.add.button('Change Player 2', change_Player2_menu)
-    # menu.add.button('High Scores', ScoreBoard)
+    menu.add.button('High Scores', displayScoreBoard)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     surface = create_example_window('TopDownShooter', (stn.WIDTH, stn.HEIGHT))
     menu.mainloop(surface)

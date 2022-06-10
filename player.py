@@ -1,11 +1,13 @@
 import pygame
 import settings as stn
+import database as db
 from random import randint
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y,HP=1000,dmg=200,score=0,lives=5):
+    def __init__(self, x, y,name,HP=1000,dmg=200,score=0,lives=5):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
+        self.name=name
         self.dmg=dmg
         self.maxHP=HP
         self.HP=self.maxHP
@@ -25,7 +27,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= 5
             if self.rect.right<0:
                 self.rect.left=stn.WIDTH
-
 
         #joueur va à droite
         if self.moveset[1]:
@@ -66,3 +67,50 @@ class Player(pygame.sprite.Sprite):
     def takeDamage(self,player):
         self.decreaseHP(player.dmg)
         player.increaseScore(50)
+    def changeUsername(self,username):
+        if(username!=""):
+            self.name=username
+            db.insertValue(self,self.pos)
+        print(self.name)
+        #changement de dégat
+    def changeUserDamage(self,damage):
+        if(damage!="" and damage.isnumeric()):
+            self.Dmg=int(damage)
+            #on input change your value is returned here
+            db.insertValue(self,self.pos)
+        print('Player damage is', self.Dmg)
+
+
+        #changement de points de vie
+    def changePlayerHealth(self,Health):
+        if(Health!="" and Health.isnumeric()):
+            self.maxHP=float(Health)
+            #on input change your value is returned here
+            db.insertValue(self,self.pos)
+        print('Player health is', self.maxHP)
+
+        #changement de vitesse d'attaque
+    def changePlayeratkspd(self,atkspd):
+        if(atkspd!="" and atkspd.isnumeric()):
+            self.atkSpeed=int(atkspd)
+            #on input change your value is returned here
+            db.insertValue(self,self.pos)
+        print('Player attack speed is', self.atkSpeed)
+
+
+        #changement de nombre de vies
+    def changePlayerLives(self,lives):
+        if(lives!="" and lives.isnumeric()):
+            self.lives=int(lives)
+            #on input change your value is returned here
+            db.insertValue(self,self.pos)
+        print('Player lives is', self.lives)
+
+
+        #changement de vitesse de déplacement
+    def changePlayerSpeed(self,speed):
+        if(speed!="" and speed.isnumeric()):
+            self.speed=int(speed)
+            #on input change your value is returned here
+            db.insertValue(self,self.pos)
+        print('Player speed is', self.speed)
