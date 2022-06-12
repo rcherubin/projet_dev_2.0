@@ -6,16 +6,15 @@ from player import Player
 from ball import Ball
 import settings as stn
 import database as db
+import affichages as affiche
 from pygame_menu.examples import create_example_window
 pygame.init()
 display = pygame.display.set_mode((stn.WIDTH, stn.HEIGHT))
 clock = pygame.time.Clock()
+player1 = Player(400, 300,"Cherubin",stn.WHITE)
+player2 = Player(100, 100,"Ted",stn.RED)
 def start_the_game():
 
-
-
-    player1 = Player(400, 300,"Cherubin")
-    player2 = Player(100, 100,"Ted")
     players_sprites = pygame.sprite.Group() # tous les sprites
     bullets_P1=pygame.sprite.Group() # la sprite des bulletes du joueur 1 
     bullets_P2=pygame.sprite.Group() # la sprite des bulletes du joueur 2
@@ -24,7 +23,16 @@ def start_the_game():
 
     while True:
         display.fill((22, 165, 89))
-        
+        textBox1,text1=affiche.display(player1.name+" : "+str(player1.score))
+        textBoxHP1,textHP1=affiche.display("HP : "+str(player1.HP))
+        # set the center of the rectangular object.
+        textBox1.topleft = (0,0)
+        textBoxHP1.topleft = (0,40)
+        # textRectLives1.topleft = (0,70)
+        textBox2,text2=affiche.display(player2.name+" : "+str(player2.score))
+        textBoxHP2,textHP2=affiche.display("HP : "+str(player2.HP))
+        textBox2.topright = (stn.WIDTH,0)
+        textBoxHP2.topright = (stn.WIDTH,40)
         mouse_x, mouse_y = pygame.mouse.get_pos()
         
         for event in pygame.event.get():
@@ -54,7 +62,7 @@ def start_the_game():
         if hit_On_P2:
             print("player2 touché par un bullet")
             player2.takeDamage(player1)
-        if player2.lives<=0 or player1.lives<=0:
+        if player2.HP<=0 or player1.HP<=0:
             if player1.score>player2.score:
                 gameOverText=player1.name+" est le gagnant avec "+str(player1.score)+" de score!!!"
                 db.insertWinner(player1)
@@ -70,14 +78,20 @@ def start_the_game():
         players_sprites.draw(display)
         bullets_P1.draw(display)
         bullets_P2.draw(display)
+        display.blit(text1, textBox1)
+        display.blit(textHP1, textBoxHP1)
+        display.blit(text2, textBox2)
+        display.blit(textHP2, textBoxHP2)
         pygame.display.update()
 def menuPrincipal():
     displayScoreBoard=mn.displayScoreBoard()
+    modification_joueur1=mn.modifJoueur(player1)
+    modification_joueur2=mn.modifJoueur(player2)
     menu = pygame_menu.Menu('Welcome', stn.WIDTH, stn.HEIGHT,
                         theme=pygame_menu.themes.THEME_BLUE)
     menu.add.button('Play',start_the_game)
-    # menu.add.button('Change Player 1', change_Player1_menu)
-    # menu.add.button('Change Player 2', change_Player2_menu)
+    menu.add.button('Changer joueur 1', modification_joueur1)
+    menu.add.button('Changer joueur 2', modification_joueur2)
     menu.add.button('High Scores', displayScoreBoard)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     surface = create_example_window('TopDownShooter', (stn.WIDTH, stn.HEIGHT))

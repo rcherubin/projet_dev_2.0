@@ -47,3 +47,4 @@ def getScores():
     record = cursor.fetchall()
     connection.close()
     return record
+
