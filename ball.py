@@ -4,7 +4,7 @@ import settings as stn
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, x, y, mouse_x, mouse_y):
+    def __init__(self, x, y, mouse_x, mouse_y,speed=15):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -14,7 +14,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect.center=(x,y)
         self.mouse_x = mouse_x
         self.mouse_y = mouse_y
-        self.speed = 15
+        self.speed = speed
         self.angle = math.atan2(y - mouse_y, x - mouse_x)
         self.x_vel = math.cos(self.angle) * self.speed
         self.y_vel = math.sin(self.angle) * self.speed

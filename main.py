@@ -41,9 +41,9 @@ def start_the_game():
                 pygame.QUIT
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_SPACE:
-                    bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y))
+                    bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
                 if event.key==pygame.K_RETURN:
-                    bullets_P2.add(Ball(player2.rect.x, player2.rect.y, mouse_x, mouse_y))
+                    bullets_P2.add(Ball(player2.rect.x, player2.rect.y, mouse_x, mouse_y,player2.atkSpeed))
                 
         keys = pygame.key.get_pressed()
         
