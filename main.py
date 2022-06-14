@@ -51,8 +51,8 @@ def start_the_game():
                 sys.exit()
                 pygame.QUIT
             if event.type == pygame.KEYDOWN:
-                # if event.key==pygame.K_SPACE:
-                #     bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
+                if event.key==pygame.K_SPACE:
+                    bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
                 if event.key==pygame.K_RETURN:
                     bullets_P2.add(Ball(player2.rect.x, player2.rect.y, mouse_x, mouse_y,player2.atkSpeed))
             if event.type == pygame.JOYBUTTONDOWN:
@@ -102,8 +102,8 @@ def start_the_game():
                         DOWN = False                
         keys = pygame.key.get_pressed()
         
-        player1.changeMoveSet([LEFT,RIGHT,UP,DOWN])
-        # player1.changeMoveSet([keys[pygame.K_q],keys[pygame.K_d],keys[pygame.K_z],keys[pygame.K_s]])
+        # player1.changeMoveSet([LEFT or,RIGHT,UP,DOWN])
+        player1.changeMoveSet([keys[pygame.K_q] or LEFT,keys[pygame.K_d] or RIGHT,keys[pygame.K_z] or UP,keys[pygame.K_s] or DOWN])
         player2.changeMoveSet([keys[pygame.K_LEFT],keys[pygame.K_RIGHT],keys[pygame.K_UP],keys[pygame.K_DOWN]])
         players_sprites.update()
         bullets_P1.update()
