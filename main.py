@@ -7,14 +7,25 @@ from ball import Ball
 import settings as stn
 import database as db
 import affichages as affiche
+import os,json
 from pygame_menu.examples import create_example_window
 pygame.init()
 display = pygame.display.set_mode((stn.WIDTH, stn.HEIGHT))
 clock = pygame.time.Clock()
 player1 = Player(400, 300,"Cherubin",stn.WHITE)
 player2 = Player(100, 100,"Ted",stn.RED)
+joysticks = []
+for i in range(pygame.joystick.get_count()):
+    joysticks.append(pygame.joystick.Joystick(i))
+for joystick in joysticks:
+    joystick.init()
+with open(os.path.join("ps4_keys.json"), 'r+') as file:
+    button_keys = json.load(file)
+# 0: Left analog horizonal, 1: Left Analog Vertical, 2: Right Analog Horizontal
+# 3: Right Analog Vertical 4: Left Trigger, 5: Right Trigger
+analog_keys = {0:0, 1:0, 2:0, 3:0, 4:-1, 5: -1 }
 def start_the_game():
-
+    LEFT, RIGHT, UP, DOWN = False, False, False, False
     players_sprites = pygame.sprite.Group() # tous les sprites
     bullets_P1=pygame.sprite.Group() # la sprite des bulletes du joueur 1 
     bullets_P2=pygame.sprite.Group() # la sprite des bulletes du joueur 2
@@ -40,14 +51,59 @@ def start_the_game():
                 sys.exit()
                 pygame.QUIT
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_SPACE:
-                    bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
+                # if event.key==pygame.K_SPACE:
+                #     bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
                 if event.key==pygame.K_RETURN:
                     bullets_P2.add(Ball(player2.rect.x, player2.rect.y, mouse_x, mouse_y,player2.atkSpeed))
-                
+            if event.type == pygame.JOYBUTTONDOWN:
+                if event.button == button_keys['x']:
+                    bullets_P1.add(Ball(player1.rect.x, player1.rect.y, mouse_x, mouse_y,player1.atkSpeed))
+            if event.type == pygame.JOYBUTTONDOWN:
+                if event.button == button_keys['left_arrow']:
+                    LEFT = True
+                if event.button == button_keys['right_arrow']:
+                    RIGHT = True
+                if event.button == button_keys['down_arrow']:
+                    DOWN = True
+                if event.button == button_keys['up_arrow']:
+                    UP = True
+            # HANDLES BUTTON RELEASES
+            if event.type == pygame.JOYBUTTONUP:
+                if event.button == button_keys['left_arrow']:
+                    LEFT = False
+                if event.button == button_keys['right_arrow']:
+                    RIGHT = False
+                if event.button == button_keys['down_arrow']:
+                    DOWN = False
+                if event.button == button_keys['up_arrow']:
+                    UP = False
+            if event.type == pygame.JOYAXISMOTION:
+                analog_keys[event.axis] = event.value
+                # print(analog_keys)
+                # Horizontal Analog
+                if abs(analog_keys[0]) > .4:
+                    if analog_keys[0] < -.7:
+                        LEFT = True
+                    else:
+                        LEFT = False
+                    if analog_keys[0] > .7:
+                        RIGHT = True
+                    else:
+                        RIGHT = False
+                # Vertical Analog
+                if abs(analog_keys[1]) > .4:
+                    if analog_keys[1] < -.7:
+                        UP = True
+                    else:
+                        UP = False
+                    if analog_keys[1] > .7:
+                        DOWN = True
+                    else:
+                        DOWN = False                
         keys = pygame.key.get_pressed()
         
-        player1.changeMoveSet([keys[pygame.K_q],keys[pygame.K_d],keys[pygame.K_z],keys[pygame.K_s]])
+        player1.changeMoveSet([LEFT,RIGHT,UP,DOWN])
+        # player1.changeMoveSet([keys[pygame.K_q],keys[pygame.K_d],keys[pygame.K_z],keys[pygame.K_s]])
         player2.changeMoveSet([keys[pygame.K_LEFT],keys[pygame.K_RIGHT],keys[pygame.K_UP],keys[pygame.K_DOWN]])
         players_sprites.update()
         bullets_P1.update()
@@ -63,12 +119,18 @@ def start_the_game():
             print("player2 touché par un bullet")
             player2.takeDamage(player1)
         if player2.HP<=0 or player1.HP<=0:
+
             if player1.score>player2.score:
                 gameOverText=player1.name+" est le gagnant avec "+str(player1.score)+" de score!!!"
+                
                 db.insertWinner(player1)
             else:
                 gameOverText=player2.name+" est le gagnant avec "+str(player2.score)+" de score!!!"
                 db.insertWinner(player2)
+            player1.HP=player1.maxHP
+            player2.HP=player2.maxHP
+            player1.score=0
+            player2.score=0
             scoreEndGame(gameOverText)
             break
         
